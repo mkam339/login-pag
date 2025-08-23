@@ -1,305 +1,1015 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قنوات طويق التعليمية | منصة التعليم الإلكتروني</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://js.stripe.com/v3/"></script>
-    <style>
-        /* التنسيقات الأساسية */
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: ##55AB77;
-            color: #FFFFFF;
-        }
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        .test-question {
-            background-color: #FFFFFF;
-            border-left: 4px solid #55AB77;
-        }
-        /* التنقل */
-        .nav-item:hover {
-            color: #55AB77;
-        }
-        .nav-item.active {
-            border-bottom: 2px solid #55AB77;
-        }
-        /* الأزرار */
-        .btn-primary {
-            background-color: #55AB77;
-            transition: all 0.3s;
-        }
-        .btn-primary:hover {
-            background-color: #55AB77;
-        }
-        /* لوحة التحكم */
-        .dashboard-sidebar {
-            min-height: calc(100vh - 4rem);
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>طويق التعليمية — نموذج واجهة (معدّل)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{ --primary:#55AB77; --text:#111111; --muted:#6b7280; }
+    body { font-family: 'Tajawal', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:var(--text); background:#fff; }
+    .brand { color:var(--primary); font-weight:800; letter-spacing:1px; }
+    .card-shadow { box-shadow: 0 6px 20px rgba(16,24,40,0.06); }
+    .btn-primary { background:var(--primary); color:white; }
+    .btn-primary:hover { background:#449a63; }
+    .correct-badge { background:var(--primary); color:#fff; padding:3px 8px; border-radius:999px; font-size:12px; }
+    .hidden { display:none; }
+    .thumb { width:120px; height:80px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; }
+  </style>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyB4_41AcIGnlxFVT7XYGfFFCtGQZmFj0tI",
+  authDomain: "tawiq-f8d65.firebaseapp.com",
+  databaseURL: "https://tawiq-f8d65-default-rtdb.firebaseio.com",
+  projectId: "tawiq-f8d65",
+  storageBucket: "tawiq-f8d65.firebasestorage.app",
+  messagingSenderId: "47258312484",
+  appId: "1:47258312484:web:588d01bd2d7fd560e49db1",
+  measurementId: "G-4JXWGDD0HY"
+};
+const app = firebase.initializeApp(firebaseConfig);
+const analytics = firebase.analytics();
+const db = firebase.database();
+</script>
+
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
 </head>
-<body>
-    <!-- شريط التنقل الرئيسي -->
-    <nav class="bg-white shadow-lg">
-        <div class="container mx-auto px-6 py-3">
-            <div class="flex justify-between items-center">
-                <!-- الشعار -->
-                <div class="flex items-center">
-                    <a href="#" class="text-xl font-bold text-gray-800">
-                        <img src="https://i.ibb.co/Cpc7k6bM/Screenshot-2025-08-10-135424.png=طويق+تعليمي" alt="شعار قنوات طويق التعليمية باللون الأزرق والذهبي" class="h-10">
-                    </a>
-                </div>
-                
-                <!-- عناصر التنقل -->
-                <div class="hidden md:flex items-center space-x-1 space-x-reverse">
-                    <a href="#" class="nav-item py-4 px-6 text-gray-800 hover:text-green-600 transition duration-300 active">الرئيسية</a>
-                    <a href="https://mkam339.github.io/-/#" class="nav-item py-4 px-6 text-gray-800 hover:text-green-600 transition duration-300">الدورات</a>
-                    <a href="#about" class="nav-item py-4 px-6 text-gray-800 hover:text-green-600 transition duration-300">عن طويق</a>
-                    <a href="#contact" class="nav-item py-4 px-6 text-gray-800 hover:text-green-600 transition duration-300">تواصل معنا</a>
-                </div>
-                
-                <!-- أزرار تسجيل الدخول/التسجيل -->
-             
-                
-                <!-- زر القائمة المختصرة للأجهزة الصغيرة -->
-                <button class="md:hidden focus:outline-none" id="menuBtn">
-                    <i class="fas fa-bars text-green-800 text-xl"></i>
-                </button>
-            </div>
-            
-            <!-- القائمة المختصرة -->
-            <div class="md:hidden hidden" id="mobileMenu">
-                <a href="#" class="block py-2 px-4 text-gray-800 hover:bg-green-100">الرئيسية</a>
-                <a href="https://mkam339.github.io/-/#" class="block py-2 px-4 text-gray-800 hover:bg-green-100">الدوره </a>
-                <a href="#about" class="block py-2 px-4 text-gray-800 hover:bg-green-100">عن طويق</a>
-                <a href="#contact" class="block py-2 px-4 text-gray-800 hover:bg-green-100">تواصل معنا</a>
-                <a href="login.html" class="block py-2 px-4 text-gray-800 hover:bg-green-100">تسجيل الدخول</a>
-                <a href="register.html" class="block py-2 px-4 text-gray-800 hover:bg-green-100">حساب جديد</a>
-            </div>
+<body class="antialiased">
+  <!-- NAVBAR -->
+  <nav class="bg-white border-b">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <img id="logo" src="https://i.ibb.co/Cpc7k6bM/Screenshot-2025-08-10-135424.png=طويق" alt="logo" class="h-10">
+        <div>
         </div>
-    </nav>
+      </div>
 
-    <!-- قسم البطل (Hero Section) -->
-    <section class="bg-gradient-to-r from-green-600 to-green-800 text-green py-20">
-        <div class="container mx-auto px-6 text-center">
-            <h1 class="text-4xl font-bold mb-6">طويق التعليمية .. رحلة التميز تبدأ من هنا</h1>
-            <p class="text-xl mb-8">منصة تعليمية متكاملة تقدم أفضل الدورات والبرامج التدريبية بأسلوب فعّال وممتع</p>
-            <div class="flex justify-center space-x-4 space-x-reverse">
-                <a href="https://mkam339.github.io/-/#" class="bg-green text-white-600 px-6 py-3 rounded-lg font-semibold hover:bg-green-100 transition duration-300">
-                    <i class="fas fa-book-open mr-2"></i> تصفح الدورات
-                </a>
-                  
-            </div>
+      <div class="hidden md:flex items-center gap-6">
+        <a href="https://t.me/tawiqKSA" class="text-sm text-gray-700 hover:text-black">تواصل</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button id="btnLogin" class="text-sm px-4 py-2 border rounded hover:bg-gray-50">تسجيل/دخول</button>
+        <button id="btnDashboard" class="text-sm px-4 py-2 btn-primary rounded hidden">لوحة المشرف</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="container mx-auto px-6 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+      <div>
+
+        <div class="mt-6 flex gap-3">
         </div>
-    </section>
+      </div>
 
-    <!-- قسم الدورات -->
-    <section id="courses" class="py-16 bg-white">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-12">أحدث الدورات التعليمية</h2>
-            
-            <!-- فلترة الدورات -->
-            <div class="flex flex-wrap justify-between mb-8 gap-4">
-                <div class="flex space-x-2 space-x-reverse">
-                    <button class="filter-btn active px-4 py-2 bg-white-600 text-white rounded" data-filter="all">الكل</button>
-                    <button class="filter-btn px-4 py-2 bg-green-200 rounded hover:bg-green-300" data-filter="quantitative">اختبارات كمية</button>gray
-                    <button class="filter-btn px-4 py-2 bg-green-200 rounded hover:bg-green-300" data-filter="verbal">اختبارات لفظية</button>
-                    <button class="filter-btn px-4 py-2 bg-green-200 rounded hover:bg-green-300" data-filter="courses">دورات متخصصة</button>
-                </div>
-                
-        
+     
+    </div>
+  </header>
+<center>
+  <div style="position: relative; display: inline-block;">
+  <!-- الصورة -->
+  <img src="https://i.ibb.co/35Pc5r1L/Whats-App-Image-2025-08-12-at-01-42-07-61c33bae.jpg" alt="صورة" style="display: block; max-width: 100%;">
+
+  <!-- زر القناة الرئيسية -->
+  <a href="https://t.me/tawiqKSA"
+     style="
+       position: absolute;
+       top: 78%;
+       right: 5%;
+       width: 160px;
+       height: 55px;
+       background: linear-gradient(to right, #15b39a, #00d084);
+       color: white;
+       font-family: Arial, sans-serif;
+       font-size: 20px;
+       font-weight: bold;
+       text-decoration: none;
+       border-radius: 30px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+     ">
+    القناة الرئيسية
+  </a>
+
+  <!-- زر واجهة المشتركين -->
+  <a href="https://example.com/subscribers"
+     style="
+       position: absolute;
+       top: 78%;
+       left: 5%;
+       width: 160px;
+       height: 55px;
+       background: linear-gradient(to right, #15b39a, #00d084);
+       color: white;
+       font-family: Arial, sans-serif;
+       font-size: 20px;
+       font-weight: bold;
+       text-decoration: none;
+       border-radius: 30px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+     ">
+    واجهة المشتركين
+  </a>
+</div>
+</center>
+  <!-- COURSES SECTION -->
+  <section id="courses" class="container mx-auto px-6 pb-12">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold">أحدث الدورات</h2>
+      <!-- تم حذف خانة البحث بحسب الطلب -->
+    </div>
+
+    <div id="coursesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- populated by JS -->
+    </div>
+
+    <!-- الصورة الثابتة المرسلة من المستخدم أسفل الدورات -->
+    <div class="mt-8">
+      <h3 class="text-lg font-semibold mb-3">صورة توضيحية</h3>
+      <img src="/mnt/data/4f66b722-edb6-45f6-8ab1-96e774620e20.jpg" alt="الاخبار" class="w-full rounded card-shadow" />
+      <!-- إذا لم تظهر الصورة لأن المسار محلي، سيتم استخدام رابط بديل -->
+      <noscript class="text-sm text-gray-500">قد تحتاج إلى تحميل الصورة محليًا على المسار أعلاه أو تعديل المسار ليتناسب مع بيئتك.</noscript>
+    </div>
+  </section>
+
+  <!-- COURSE DETAIL (modal/panel) -->
+  <div id="courseDetail" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-6">
+    <div class="bg-white rounded-lg w-full max-w-4xl overflow-hidden shadow-xl">
+      <div class="flex justify-between items-center p-4 border-b">
+        <h3 id="detailTitle" class="text-xl font-bold"></h3>
+        <button onclick="closeDetail()" class="px-6 py-2 border rounded text-sm">X إغلاق</button>
+      </div>
+      <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1">
+          <img id="detailImage" src="https://placehold.co/600x400" alt="" class="rounded-lg w-full">
+          <div class="mt-4">
+            <div class="text-2xl font-bold text-gray-800" id="detailPrice"></div>
+            <div class="text-sm text-gray-500">مدة الدورة: <span id="detailDuration">—</span></div>
+            <div class="mt-3">
+              <button class="w-full py-2 btn-primary rounded" onclick="buyCourse()">اشترِ الآن</button>
             </div>
-            
-            <!-- قائمة الدورات -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="coursesContainer">
-                <!-- سيتم ملء هذه القائمة باستخدام JavaScript -->
-            </div>
-            
-            <div class="text-center mt-8">
-                <a href="#" class="inline-block px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
-                    عرض جميع الدورات <i class="fas fa-arrow-left ml-2"></i>
-                </a>
-            </div>
+          </div>
         </div>
-    </section>
+        <div class="lg:col-span-2">
+          <h4 class="font-semibold">الوصف</h4>
+          <p id="detailDesc" class="mt-2 text-gray-700"></p>
 
-    <!-- قسم عن طويق -->
-    <section id="about" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-8 md:mb-0">
-                    <img src="https://placehold.co/600x400?text=عن+طويق" alt=" blob:https://www.blackbox.ai/b590bb1a-3825-4c59-9f01-2aa8ca795afc" class="rounded-lg shadow-xl">
-                </div>
-                <div class="md:w-1/2 md:pr-12">
-                    <h2 class="text-3xl font-bold mb-6">عن قنوات طويق التعليمية</h2>
-                    <p class="text-lg text-gray-700 mb-4">
-                        قنوات طويق التعليمية هي منصة رائدة في مجال التعليم الإلكتروني، تهدف إلى تقديم محتوى تعليمي متميز يساهم في تنمية المهارات ورفع المستوى المعرفي للطلاب والمهنيين.
-                    </p>
-                    <p class="text-lg text-green-700 mb-4">
-                        نقدم مجموعة متنوعة من الدورات والبرامج التدريبية في مختلف المجالات الأكاديمية والمهنية، مع التركيز على اختبارات القياس والتحصيل العلمي.
-                    </p>
-                    <p class="text-lg text-green-700 mb-6">
-                        تتميز منصتنا بفريق من المدربين والاختصاصيين ذوي الخبرة العالية، ونحرص على تقديم المحتوى بأسلوب سهل ومبسط يركز على الفهم والتحليل.
-                    </p>
-                    <div class="space-y-3">
-                        <div class="flex items-center">
-                            <div class="bg-green-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-graduation-cap text-green-600"></i>
-                            </div>
-                            <span>أكثر من 50 دورة تدريبية</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="bg-green-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-chalkboard-teacher text-green-600"></i>
-                            </div>
-                            <span>فريق تدريسي متميز</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="bg-green-100 p-2 rounded-full mr-3">
-                                <i class="fas fa-users text-green-600"></i>
-                            </div>
-                            <span>أكثر من 10,000 طالب مسجل</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          <h4 class="font-semibold mt-6">ما ستتعلمه</h4>
+          <ul id="detailWhat" class="list-disc list-inside mt-2 text-gray-700"></ul>
+
+          <h4 class="font-semibold mt-6">الحالة</h4>
+          <div id="detailSaleState" class="mt-2 text-sm text-gray-600"></div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
 
-    <!-- قسم المميزات -->
-    <section class="py-16 bg-green">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-12">لماذا اختيار طويق التعليمية؟</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-gray-50 p-8 rounded-lg text-center hover:shadow-lg transition duration-300">
-                    <div class="bg-blob:green-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-star text-green-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">جودة عالية</h3>
-                    <p class="text-gray-600">
-                        محتوى تعليمي متميز مصمم بأعلى المعايير وبتوجيه من خبراء متخصصين
-                    </p>
-                </div>
-                
-                <div class="bg-gray-50 p-8 rounded-lg text-center hover:shadow-lg transition duration-300">
-                    <div class="bg-green-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-clock text-green-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">مرونة في الوقت</h3>
-                    <p class="text-green-600">
-                        تعلم في أي وقت ومن أي مكان وفقًا لجدولك الشخصي
-                    </p>
-                </div>
-                
-                <div class="bg-gray-50 p-8 rounded-lg text-center hover:shadow-lg transition duration-300">
-                    <div class="bg-green-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-headset text-green-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">دعم فني متكامل</h3>
-                    <p class="text-green-600">
-                        فريق دعم فني متاح لمساعدتك في أي وقت ومن خلال قنوات متعددة
-                    </p>
-                </div>
-            </div>
+  <!-- MY COURSES (hidden panel) -->
+  <section id="myCourses" class="container mx-auto px-6 py-12 hidden">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">دوراتي</h2>
+      <div>
+        <button onclick="goHome()" class="px-4 py-2 border rounded">العودة</button>
+      </div>
+    </div>
+
+    <div id="myCoursesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+  </section>
+
+  <!-- AFTER PAYMENT -->
+  <section id="postPayment" class="container mx-auto px-6 py-12 hidden">
+    <div class="bg-white p-6 rounded-lg card-shadow">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold">اكتمال الدفع — ابدأ الدورة الآن</h2>
+        <div>
+          <button class="px-4 py-2 rounded border" onclick="goHome()">العودة</button>
         </div>
-    </section>
+      </div>
 
-    <!-- صفحة الدورة المفصلة (ستظهر عند اختيار دورة) -->
-    <section id="courseDetails" class="py-16 bg-green-50 hidden">
-        <div class="container mx-auto px-6">
-            <button id="backToCourses" class="mb-6 text-green-600 hover:text-green-800">
-                <i class="fas fa-arrow-right mr-2"></i> العودة إلى الدورات
-            </button>
-            
-            <div class="flex flex-col lg:flex-row gap-8">
-                <!-- محتوى الدورة -->
-                <div class="lg:w-2/3">
-                    <div class="bg-green rounded-lg shadow-md overflow-hidden">
-                        <img id="courseDetailImage" src="https://placehold.co/800x450" alt="صورة الدورة التدريبية" class="w-full">
-                        <div class="p-6">
-                            <h2 id="courseDetailTitle" class="text-2xl font-bold mb-2"></h2>
-                            <div class="flex items-center mb-4">
-                                <div class="flex items-center text-yellow-500 mr-4">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                    <span class="text-gray-600 ml-2">4.7</span>
-                                </div>
-                                <span class="text-gray-600"><i class="fas fa-users mr-2"></i> 245 طالب</span>
-                            </div>
-                            
-                            <h3 class="text-xl font-semibold mt-6 mb-4">عن الدورة</h3>
-                            <p id="courseDetailDescription" class="text-green-700 mb-6"></p>
-                            
-                            <h3 class="text-xl font-semibold mt-6 mb-4">ما ستتعلمه</h3>
-                            <ul id="courseDetailLearn" class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
-                                <!-- سيتم ملؤها بالجافاسكريبت -->
-                            </ul>
-                            
-                            <h3 class="text-xl font-semibold mt-6 mb-4">متطلبات الدورة</h3>
-                            <ul id="courseDetailRequirements" class="mb-6">
-                                <!-- سيتم ملؤها بالجافاسكريبت -->
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- لوحة الشراء -->
-                <div class="lg:w-1/3">
-                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-6">
-                        <div class="text-center mb-6">
-                            <span id="courseDetailPrice" class="text-3xl font-bold text-white-600"></span>
-                            <span id="courseOldPrice" class="text-xl text-green-500 line-through mr-2"></span>
-                        </div>
-                        
-                        <button id="enrollBtn" class="w-full bg-white-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-300 mb-4">
-                            <i class="fas fa-shopping-cart mr-2"></i> سجل الآن
-                        </button>
-                        
-                        <div class="border-t pt-4 mb-4">
-                            <h4 class="font-semibold mb-3">تشمل هذه الدورة:</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i> وصول مدى الحياة
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i> شهادة إتمام
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i> دعم فني متكامل
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check text-green-500 mr-2"></i> تحديثات مجانية
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <div class="border-t pt-4">
-                            <h4 class="font-semibold mb-3">شارك هذه الدورة</h4>
-                            <div class="flex justify-center space-x-3">
-                                <a href="#" class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-200">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                                <a href="#" class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-200">
-                                    <i class="fab fa-facebook-f"></i>
-                                </a>
-                                <a href="#" class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-200">
-                                    <i class="fab fa-linkedin-in"></i>
-                                </a>
+      <p class="mt-3 text-gray-600">المحتويات التالية متاحة لك. يمكن للمشرف تعديلها من لوحة المشرف.</p>
 
-                                <a href="#" class="w-10 h-10
+      <div id="courseButtons" class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+    </div>
+  </section>
+
+  <!-- ADMIN PANEL (UI-only) -->
+  <section id="adminPanel" class="container mx-auto px-6 py-12 hidden">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">لوحة المشرف</h2>
+      <div>
+        <button onclick="goHome()" class="px-4 py-2 border rounded">خروج</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Courses manager -->
+      <div class="bg-white p-6 rounded-lg card-shadow">
+        <h3 class="font-semibold mb-4">إدارة الدورات</h3>
+
+        <div class="grid grid-cols-1 gap-2 mb-4">
+          <input id="cTitle" placeholder="عنوان الدورة" class="px-3 py-2 border rounded w-full" />
+          <input id="cPrice" type="number" min="0" placeholder="السعر (ر.س)" class="px-3 py-2 border rounded w-full" />
+          <textarea id="cDesc" placeholder="وصف الدورة" class="px-3 py-2 border rounded w-full"></textarea>
+          <input id="cDuration" placeholder="المدة (مثلاً: 10 ساعات)" class="px-3 py-2 border rounded w-full" />
+          <label class="text-sm">صورة الدورة (اختَر ملفًا من جهازك أو ضع رابطًا)</label>
+          <div class="flex gap-2">
+            <input id="cImageUrl" placeholder="رابط الصورة (URL)" class="px-3 py-2 border rounded w-full" />
+            <input id="cImageFile" type="file" accept="image/*" class="px-3 py-2 border rounded" />
+          </div>
+          <select id="cSaleState" class="px-3 py-2 border rounded w-full">
+            <option value="before">قبل العرض</option>
+            <option value="after">بعد العرض</option>
+          </select>
+
+          <div class="flex gap-2">
+            <button class="px-4 py-2 btn-primary rounded" onclick="adminAddCourse()">إضافة / حفظ</button>
+            <button class="px-4 py-2 border rounded" onclick="adminClearCourseForm()">مسح الحقول</button>
+          </div>
+        </div>
+
+        <div id="adminCoursesList" class="mt-4 space-y-2"></div>
+      </div>
+
+      <!-- News images manager -->
+      <div class="bg-white p-6 rounded-lg card-shadow">
+        <h3 class="font-semibold mb-4">إدارة صور الأخبار</h3>
+
+        <div class="mb-3">
+          <label class="text-sm">رفع صورة من جهازك</label>
+          <input id="newsFile" type="file" accept="image/*" class="mt-2" />
+        </div>
+        <div class="mb-3">
+          <label class="text-sm">أو ضع رابط صورة</label>
+          <input id="newsUrl" placeholder="رابط الصورة" class="px-3 py-2 border rounded w-full" />
+        </div>
+        <div class="flex gap-2">
+          <button class="px-4 py-2 btn-primary rounded" onclick="addNewsImageFromFile()">رفع من جهاز</button>
+          <button class="px-4 py-2 border rounded" onclick="addNewsImageFromUrl()">إضافة من رابط</button>
+        </div>
+
+        <div id="newsList" class="mt-4 grid grid-cols-2 gap-3"></div>
+      </div>
+    </div>
+
+    <!-- Sales preview -->
+    <div class="mt-8 bg-white p-6 rounded-lg card-shadow">
+      <h3 class="font-semibold mb-3">متابعة المبيعات (محاكاة)</h3>
+      <div id="salesList" class="text-sm text-gray-600">لا توجد مبيعات بعد.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t mt-12">
+    <div class="container mx-auto px-6 py-6 text-center text-sm text-gray-600">
+      © 2025 طويق التعليمية — كل الحقوق محفوظة
+    </div>
+  </footer>
+
+  <!-- LOGIN / REGISTER MODAL (updated form) -->
+  <div id="authModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-lg w-full max-w-md p-6">
+      <div class="flex justify-between items-center">
+        <h3 id="authTitle" class="text-lg font-semibold">تسجيل الدخول</h3>
+        <button onclick="closeAuth()">✕</button>
+      </div>
+
+      <div id="authBody" class="mt-4">
+        <!-- LOGIN FORM -->
+        <form id="loginForm" onsubmit="event.preventDefault(); doLogin();">
+          <input id="authEmail" placeholder="البريد الإلكتروني أو اسم المستخدم" class="w-full px-3 py-2 border rounded mb-2" />
+          <input id="authPass" placeholder="كلمة المرور" type="password" class="w-full px-3 py-2 border rounded mb-2" />
+          <div class="flex gap-2">
+            <button type="submit" class="px-4 py-2 btn-primary rounded">دخول</button>
+            <button type="button" class="px-4 py-2 border rounded" onclick="showRegisterForm()">إنشاء حساب</button>
+          </div>
+          <div class="mt-3 text-sm text-gray-600">تسجيل مبدئي باستخدام localStorage (نموذج فقط).</div>
+        </form>
+
+        <!-- REGISTER FORM (hidden initially) -->
+        <form id="registerForm" class="hidden" onsubmit="event.preventDefault(); doRegister();">
+          <input id="regEmail" placeholder="البريد الإلكتروني" class="w-full px-3 py-2 border rounded mb-2" required />
+          <input id="regUsername" placeholder="اسم المستخدم" class="w-full px-3 py-2 border rounded mb-2" required />
+          <input id="regPass" placeholder="كلمة المرور" type="password" class="w-full px-3 py-2 border rounded mb-2" required />
+          <input id="regAdminCode" placeholder="رمز المشرف (إذا وُجد)" class="w-full px-3 py-2 border rounded mb-2" />
+          <div class="flex gap-2">
+            <button type="submit" class="px-4 py-2 btn-primary rounded">إنشاء حساب</button>
+            <button type="button" class="px-4 py-2 border rounded" onclick="showLoginForm()">عودة للدخول</button>
+          </div>
+          <div class="mt-2 text-sm text-gray-500">إذا أدخلت رمز المشرف الصحيح سيتم منحك صلاحية مشرف.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+  /*********************
+   * Admin code value
+   *********************/
+  const ADMIN_CODE = 'moshrif192837465';
+
+  /*********************
+   * Load persisted data or defaults
+   *********************/
+  let courses = JSON.parse(localStorage.getItem('coursesData') || 'null');
+  if(!courses){
+    courses = [
+      { id:1, title:'دورة القياس المتقدم', price:199, image:'https://placehold.co/800x500?text=قياس', desc:'تحضير شامل لاختبار القياس مع اختبارات تجريبية.', duration:'12 ساعة', saleState:'before', what:['أساسيات القياس','أساليب حل الأسئلة','اختبارات زمنية'], tests:[{id:'t1',title:'اختبار كمي'}] },
+      { id:2, title:'دورة اللغة العربية', price:99, image:'https://placehold.co/800x500?text=عربي', desc:'تحسين المهارات اللغوية واختبارات لفظية مكثفة.', duration:'8 ساعات', saleState:'after', what:['قواعد','قراءة','تمارين لفظي'], tests:[{id:'t2',title:'اختبار لفظي'}] },
+      { id:3, title:'دورة الرياضيات المتقدمة', price:149, image:'https://placehold.co/800x500?text=رياضيات', desc:'دورة تغطي مفاهيم رياضية متقدمة مع حل مسائل.', duration:'10 ساعات', saleState:'before', what:['جبر','هندسة','إحصاء'], tests:[] }
+    ];
+    localStorage.setItem('coursesData', JSON.stringify(courses));
+  }
+
+  let courseButtons = JSON.parse(localStorage.getItem('courseButtons') || '[]');
+  let adminQuestions = JSON.parse(localStorage.getItem('adminQuestions') || '[]');
+  let sales = JSON.parse(localStorage.getItem('sales') || '[]');
+  let newsImages = JSON.parse(localStorage.getItem('newsImages') || '[]');
+
+  /*********************
+   * Utilities & routing
+   *********************/
+  function goHome(){ showSection('home'); document.getElementById('courses').scrollIntoView(); }
+  function goToMyCourses(){ renderMyCourses(); showSection('myCourses'); }
+  function showSection(s){
+    document.getElementById('courses').style.display = (s==='home' ? 'block':'none');
+    document.getElementById('myCourses').classList.toggle('hidden', s!=='myCourses');
+    document.getElementById('postPayment').classList.toggle('hidden', s!=='postPayment');
+    document.getElementById('adminPanel').classList.toggle('hidden', s!=='admin');
+    if(s==='home' || s===undefined){ document.getElementById('courses').style.display='block'; document.getElementById('myCourses').classList.add('hidden'); document.getElementById('postPayment').classList.add('hidden'); document.getElementById('adminPanel').classList.add('hidden'); }
+  }
+
+  /*********************
+   * Render courses (no search)
+   *********************/
+  function renderCourses(){
+    const container = document.getElementById('coursesContainer');
+    container.innerHTML = '';
+    courses.forEach(c=>{
+      const el = document.createElement('div');
+      el.className = 'bg-white rounded-lg overflow-hidden card-shadow';
+      el.innerHTML = `
+        <img src="${c.image}" class="w-full h-40 object-cover" onerror="this.src='https://placehold.co/800x500?text=image+not+found';" />
+        <div class="p-4">
+          <h3 class="font-semibold text-lg">${c.title}</h3>
+          <p class="text-sm text-gray-600 mt-2 line-clamp-3">${c.desc}</p>
+          <div class="mt-2 text-xs text-gray-500">الحالة: ${c.saleState === 'before' ? 'قبل العرض' : 'بعد العرض'}</div>
+          <div class="mt-4 flex items-center justify-between">
+            <div><span class="text-xl font-bold">${c.price}</span> <span class="text-sm text-gray-500">ر.س</span></div>
+            <div class="flex gap-2">
+              <button class="px-3 py-1 border rounded text-sm" onclick="openDetail(${c.id})">تفاصيل</button>
+              <button class="px-3 py-1 btn-primary rounded text-sm" onclick="quickBuy(${c.id})">اشتري</button>
+            </div>
+          </div>
+        </div>`;
+      container.appendChild(el);
+    });
+  }
+
+  function openDetail(id){
+    const c = courses.find(x=>x.id===id);
+    if(!c) return;
+    document.getElementById('detailTitle').innerText = c.title;
+    document.getElementById('detailImage').src = c.image;
+    document.getElementById('detailDesc').innerText = c.desc;
+    document.getElementById('detailPrice').innerText = c.price + ' ر.س';
+    document.getElementById('detailDuration').innerText = c.duration;
+    const what = document.getElementById('detailWhat'); what.innerHTML = ''; (c.what||[]).forEach(i=> what.innerHTML+=`<li>${i}</li>`);
+    document.getElementById('detailSaleState').innerText = c.saleState === 'before' ? 'قبل العرض' : 'بعد العرض';
+    document.getElementById('courseDetail').classList.remove('hidden'); document.getElementById('courseDetail').style.display='flex';
+    document.getElementById('courseDetail').dataset.courseId = id;
+  }
+  function closeDetail(){ document.getElementById('courseDetail').classList.add('hidden'); }
+
+  /*********************
+   * Purchase flow (simulated)
+   *********************/
+  function quickBuy(id){
+    const cobj = courses.find(c=>c.id===id);
+    const sale = { id: Date.now(), courseId:id, amount: cobj.price, status:'paid', at: Date.now(), user: getCurrentUser() ? getCurrentUser().email : 'guest' };
+    sales.push(sale); localStorage.setItem('sales', JSON.stringify(sales));
+    let my = JSON.parse(localStorage.getItem('myCourses') || '[]');
+    if(!my.find(m=>m.courseId===id)) my.push({ courseId:id, purchasedAt: Date.now()});
+    localStorage.setItem('myCourses', JSON.stringify(my));
+    renderCourseButtons(); renderSales();
+    showSection('postPayment');
+  }
+  function buyCourse(){ const id = parseInt(document.getElementById('courseDetail').dataset.courseId); quickBuy(id); }
+
+  /*********************
+   * My courses
+   *********************/
+  function renderMyCourses(){
+    const container = document.getElementById('myCoursesContainer');
+    container.innerHTML = '';
+    const my = JSON.parse(localStorage.getItem('myCourses') || '[]');
+    if(!my.length){ container.innerHTML = '<div class="text-gray-600">لم تشترِ أي دورات بعد.</div>'; return; }
+    my.forEach(entry=>{
+      const c = courses.find(x=>x.id===entry.courseId);
+      const el = document.createElement('div'); el.className='bg-white p-4 rounded-lg flex gap-4 items-center card-shadow';
+      el.innerHTML = `<img src="${c.image}" class="w-28 h-20 object-cover rounded"><div class="flex-1"><h4 class="font-semibold">${c.title}</h4><div class="text-sm text-gray-500">تم الشراء: ${new Date(entry.purchasedAt).toLocaleString()}</div></div><div><button class="px-3 py-2 btn-primary rounded" onclick="enterCourse(${c.id})">ابدأ الدورة</button></div>`;
+      container.appendChild(el);
+    });
+  }
+  function enterCourse(courseId){ renderCourseButtons(); showSection('postPayment'); }
+
+  /*********************
+   * Course Buttons (admin managed)
+   *********************/
+  function renderCourseButtons(){
+    const wrap = document.getElementById('courseButtons'); wrap.innerHTML = '';
+    if(!courseButtons.length){ wrap.innerHTML = '<div class="text-gray-600">لا توجد أزرار مُضافة بعد — اطلب من المشرف إضافتها.</div>'; return; }
+    courseButtons.forEach((b,idx)=>{
+      const el = document.createElement('div'); el.className='p-4 bg-white rounded-lg flex items-center justify-between card-shadow';
+      el.innerHTML = `<div><div class="font-semibold">${b.title}</div><div class="text-sm text-gray-500">${b.url}</div></div><div class="flex gap-2"><a target="_blank" href="${b.url}" class="px-3 py-2 btn-primary rounded text-sm">افتح</a></div>`;
+      wrap.appendChild(el);
+    });
+  }
+
+  /*********************
+   * Admin: Courses CRUD
+   *********************/
+  function adminAddCourse(){
+    // read form
+    const title = document.getElementById('cTitle').value.trim();
+    const price = parseFloat(document.getElementById('cPrice').value || 0);
+    const desc = document.getElementById('cDesc').value.trim();
+    const duration = document.getElementById('cDuration').value.trim();
+    const url = document.getElementById('cImageUrl').value.trim();
+    const fileInput = document.getElementById('cImageFile');
+    const saleState = document.getElementById('cSaleState').value;
+
+    if(!title){ alert('أدخل عنوان الدورة'); return; }
+
+    // handle file => convert to dataURL if provided
+    if(fileInput.files && fileInput.files[0]){
+      const f = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e){
+        const dataUrl = e.target.result;
+        pushCourseToList({ title, price, desc, duration, image: dataUrl, saleState });
+      };
+      reader.readAsDataURL(f);
+    } else {
+      // use url or placeholder
+      pushCourseToList({ title, price, desc, duration, image: url || 'https://placehold.co/800x500?text=new+course', saleState });
+    }
+  }
+
+  function pushCourseToList(courseObj){
+    // if editing (we store editing id in form dataset)
+    const editingId = document.getElementById('cTitle').dataset.editing;
+    if(editingId){
+      const idx = courses.findIndex(c=>c.id==editingId);
+      if(idx>-1){
+        courses[idx] = { ...courses[idx], ...courseObj };
+        alert('تم حفظ التعديل على الدورة');
+      }
+      delete document.getElementById('cTitle').dataset.editing;
+    } else {
+      const newId = Date.now();
+      courses.push({ id:newId, title:courseObj.title, price:courseObj.price||0, desc:courseObj.desc||'', duration:courseObj.duration||'', image:courseObj.image, saleState:courseObj.saleState||'before', what:[], tests:[] });
+      alert('تم إضافة الدورة');
+    }
+    localStorage.setItem('coursesData', JSON.stringify(courses));
+    adminClearCourseForm();
+    renderCourses();
+    renderAdminCoursesList();
+  }
+
+  function adminClearCourseForm(){
+    document.getElementById('cTitle').value=''; document.getElementById('cPrice').value=''; document.getElementById('cDesc').value=''; document.getElementById('cDuration').value=''; document.getElementById('cImageUrl').value=''; document.getElementById('cImageFile').value=''; document.getElementById('cSaleState').value='before';
+    delete document.getElementById('cTitle').dataset.editing;
+  }
+
+  function renderAdminCoursesList(){
+    const list = document.getElementById('adminCoursesList'); list.innerHTML='';
+    courses.slice().reverse().forEach((c)=>{
+      const row = document.createElement('div'); row.className='p-3 border rounded flex items-center justify-between';
+      row.innerHTML = `<div class="flex items-center gap-3"><img src="${c.image}" class="thumb" onerror="this.src='https://placehold.co/120x80?text=NA'"><div><div class="font-semibold">${c.title}</div><div class="text-xs text-gray-500">السعر: ${c.price} ر.س — الحالة: ${c.saleState==='before' ? 'قبل العرض' : 'بعد العرض'}</div></div></div>
+        <div class="flex flex-col gap-2">
+          <button class="px-3 py-1 border rounded text-sm" onclick="adminEditCourse(${c.id})">تعديل</button>
+          <button class="px-3 py-1 border rounded text-sm" onclick="adminDeleteCourse(${c.id})">حذف</button>
+        </div>`;
+      list.appendChild(row);
+    });
+  }
+
+  function adminEditCourse(id){
+    const c = courses.find(x=>x.id===id);
+    if(!c) return;
+    document.getElementById('cTitle').value = c.title; document.getElementById('cPrice').value = c.price; document.getElementById('cDesc').value=c.desc; document.getElementById('cDuration').value=c.duration; document.getElementById('cImageUrl').value = c.image; document.getElementById('cSaleState').value = c.saleState;
+    document.getElementById('cTitle').dataset.editing = c.id;
+    window.scrollTo({ top: document.getElementById('adminPanel').offsetTop, behavior:'smooth' });
+  }
+
+  function adminDeleteCourse(id){
+    if(!confirm('هل تأكد أنك تريد حذف هذه الدورة؟')) return;
+    courses = courses.filter(c=>c.id!==id);
+    localStorage.setItem('coursesData', JSON.stringify(courses));
+    renderCourses(); renderAdminCoursesList();
+    alert('تم الحذف');
+  }
+
+  /*********************
+   * News images manager (local files or URL)
+   *********************/
+  function addNewsImageFromFile(){
+    const finput = document.getElementById('newsFile');
+    if(!finput.files || !finput.files[0]){ alert('اختر ملفًا أولًا'); return; }
+    const f = finput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const dataUrl = e.target.result;
+      newsImages.push({ id: Date.now(), src: dataUrl });
+      localStorage.setItem('newsImages', JSON.stringify(newsImages));
+      renderNewsList();
+      finput.value = '';
+    };
+    reader.readAsDataURL(f);
+  }
+
+  function addNewsImageFromUrl(){
+    const url = document.getElementById('newsUrl').value.trim();
+    if(!url){ alert('ضع رابطًا'); return; }
+    newsImages.push({ id: Date.now(), src: url });
+    localStorage.setItem('newsImages', JSON.stringify(newsImages));
+    renderNewsList();
+    document.getElementById('newsUrl').value='';
+  }
+
+  function renderNewsList(){
+    const wrap = document.getElementById('newsList'); wrap.innerHTML='';
+    if(!newsImages.length){ wrap.innerHTML = '<div class="text-gray-600">لا توجد صور أخبار مضافة بعد.</div>'; return; }
+    newsImages.slice().reverse().forEach(img=>{
+      const el = document.createElement('div'); el.className='p-2 border rounded flex items-center justify-between gap-2';
+      el.innerHTML = `<img src="${img.src}" class="thumb" onerror="this.src='https://placehold.co/120x80?text=NA'"><div class="flex flex-col gap-2"><button class="px-3 py-1 border rounded text-sm" onclick='viewImage("${img.src.replace(/"/g,'&quot;')}")'>عرض</button><button class="px-3 py-1 border rounded text-sm" onclick="removeNewsImage(${img.id})">حذف</button></div>`;
+      wrap.appendChild(el);
+    });
+  }
+
+  function removeNewsImage(id){
+    if(!confirm('حذف هذه الصورة؟')) return;
+    newsImages = newsImages.filter(i=>i.id!==id);
+    localStorage.setItem('newsImages', JSON.stringify(newsImages));
+    renderNewsList();
+  }
+
+  function viewImage(src){
+    // عرض بسيط في نافذة جديدة
+    const w = window.open('');
+    w.document.write(`<img src="${src}" style="max-width:100%;height:auto" />`);
+  }
+
+  /*********************
+   * Admin questions & sales (existing)
+   *********************/
+  function renderAdminQuestions(){
+    const list = document.getElementById('adminQuestionsList'); if(!list) return;
+    list.innerHTML='';
+    adminQuestions.forEach((q,i)=>{
+      const el = document.createElement('div'); el.className='p-3 border rounded flex items-start justify-between';
+      el.innerHTML = `<div><div class="font-semibold">${q.testName}</div><div class="text-sm mt-1">${q.text}</div><div class="mt-2 text-xs text-gray-500">الخيارات: ${q.options.join(' | ')}</div><div class="mt-2"><span class="correct-badge">الإجابة: خيار ${parseInt(q.correct)+1}</span> <span class="text-xs text-gray-500 ml-2">وقت: ${q.time || 'مفتوح'}</span></div></div><div><button class="px-3 py-1 border rounded" onclick="removeQuestion(${i})">حذف</button></div>`;
+      list.appendChild(el);
+    });
+  }
+  function addQuestion(){
+    const testName = document.getElementById('qTest').value.trim() || 'عام';
+    const text = document.getElementById('qText').value.trim(); 
+    const options = [document.getElementById('opt1').value,document.getElementById('opt2').value,document.getElementById('opt3').value,document.getElementById('opt4').value].map(s=>s||'—');
+    const correct = document.getElementById('correctIndex').value;
+    const time = document.getElementById('qTime').value || null;
+    if(!text){ alert('أدخل نص السؤال'); return; }
+    adminQuestions.push({ testName, text, options, correct, time });
+    localStorage.setItem('adminQuestions', JSON.stringify(adminQuestions));
+    renderAdminQuestions();
+  }
+  function clearQuestions(){ if(!confirm('مسح جميع الأسئلة؟')) return; adminQuestions=[]; localStorage.setItem('adminQuestions','[]'); renderAdminQuestions(); }
+  function removeQuestion(i){ adminQuestions.splice(i,1); localStorage.setItem('adminQuestions', JSON.stringify(adminQuestions)); renderAdminQuestions(); }
+
+  /*********************
+   * Sales rendering
+   *********************/
+  function renderSales(){
+    const el = document.getElementById('salesList');
+    if(!sales.length) { el.innerText = 'لا توجد مبيعات بعد.'; return; }
+    el.innerHTML = '';
+    sales.slice().reverse().forEach(s=>{
+      const c = courses.find(x=>x.id===s.courseId) || {title:'(دورة محذوفة)'};
+      const row = document.createElement('div'); row.className='flex items-center justify-between py-2 border-b';
+      row.innerHTML = `<div class="text-sm">${c.title} — ${s.user}</div><div class="text-sm text-gray-500">${new Date(s.at).toLocaleString()} — ${s.amount} ر.س</div>`;
+      el.appendChild(row);
+    });
+  }
+
+  /*********************
+   * Auth (localStorage) with admin code check
+   *********************/
+  function getCurrentUser(){ return JSON.parse(localStorage.getItem('currentUser') || 'null'); }
+  function setCurrentUser(u){ localStorage.setItem('currentUser', JSON.stringify(u)); updateAuthUI(); }
+  function doLogin(){
+    const email = document.getElementById('authEmail').value.trim();
+    const pass = document.getElementById('authPass').value;
+    if(!email || !pass){ alert('أكمل الحقول'); return; }
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const found = users.find(x=> (x.email===email || x.username===email) && x.pass===pass);
+    if(found){
+      setCurrentUser(found);
+      closeAuth();
+      alert('تم تسجيل الدخول كمستخدم: '+(found.username||found.email));
+      if(found.role==='admin'){ showAdminPanel(); }
+    } else {
+      alert('بيانات غير صحيحة أو المستخدم غير مسجل');
+    }
+  }
+
+  function showRegisterForm(){
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('registerForm').classList.remove('hidden');
+    document.getElementById('authTitle').innerText = 'إنشاء حساب';
+  }
+  function showLoginForm(){
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('authTitle').innerText = 'تسجيل الدخول';
+  }
+
+  function doRegister(){
+    const email = document.getElementById('regEmail').value.trim();
+    const username = document.getElementById('regUsername').value.trim();
+    const pass = document.getElementById('regPass').value;
+    const adminCode = document.getElementById('regAdminCode').value.trim();
+
+    if(!email || !username || !pass){ alert('أكمل الحقول'); return; }
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    if(users.find(u=>u.email===email)){ alert('هذا البريد مسجل بالفعل'); return; }
+
+    let role = 'student';
+    if(adminCode && adminCode === ADMIN_CODE){
+      role = 'admin';
+    }
+    const newUser = { email, username, pass, role };
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    alert('تم إنشاء الحساب بنجاح. الدور: ' + role);
+    setCurrentUser(newUser);
+    closeAuth();
+    if(role === 'admin') showAdminPanel();
+  }
+
+  function openAuth(){ document.getElementById('authModal').classList.remove('hidden'); showLoginForm(); }
+  function closeAuth(){ document.getElementById('authModal').classList.add('hidden'); }
+
+  function updateAuthUI(){
+    const cur = getCurrentUser();
+    document.getElementById('btnLogin').innerText = cur ? (cur.username || cur.email) : 'تسجيل/دخول';
+    document.getElementById('btnDashboard').classList.toggle('hidden', !(cur && cur.role==='admin'));
+  }
+
+  function showAdminPanel(){
+    const cur = getCurrentUser();
+    if(!cur || cur.role!=='admin'){ alert('مساحة المشرفين مقفلة — سجّل كمشرف لعرضها'); return; }
+    showSection('admin'); document.getElementById('adminPanel').classList.remove('hidden');
+    renderAdminButtonsList(); renderAdminQuestions(); renderSales(); renderAdminCoursesList(); renderNewsList();
+  }
+
+  // bindings
+  document.getElementById('btnLogin').addEventListener('click', ()=> openAuth());
+  document.getElementById('btnDashboard').addEventListener('click', ()=> showAdminPanel());
+
+  // initial render
+  renderCourses();
+  renderCourseButtons();
+  renderAdminQuestions();
+  renderSales();
+  renderAdminCoursesList();
+  renderNewsList();
+  updateAuthUI();
+
+</script>
+
+
+<div id="adminPanel" style="display:none;position:fixed;top:0;right:0;width:350px;height:100%;background:#fff;box-shadow:-2px 0 5px rgba(0,0,0,0.3);padding:10px;z-index:9000;overflow:auto;">
+  <h3 style="text-align:center;">🛠️ قائمة المشرفين</h3>
+  <div style="display:flex;gap:5px;justify-content:space-around;margin-bottom:10px;">
+    <button onclick="openTab('coursesTab')">📝 الدورات</button>
+    <button onclick="openTab('newsTab')">🖼️ الأخبار</button>
+    <button onclick="openTab('buttonsTab')">🔘 الكورسات</button>
+    <button onclick="openTab('questionsTab')">❓ الأسئلة</button>
+    <button onclick="openTab('salesTab')">💰 المبيعات</button>
+  </div>
+  <div id="coursesTab" class="adminTab" style="display:none;">
+    <h4>إدارة الدورات</h4>
+    <div id="coursesList"></div>
+    <input type="text" id="newCourseName" placeholder="اسم الدورة">
+    <button onclick="addCourse()">➕ إضافة</button>
+  </div>
+  <div id="newsTab" class="adminTab" style="display:none;">
+    <h4>إدارة صور الأخبار</h4>
+    <div id="newsList"></div>
+    <input type="text" id="newNewsURL" placeholder="رابط الصورة">
+    <button onclick="addNews()">➕ إضافة</button>
+  </div>
+  <div id="buttonsTab" class="adminTab" style="display:none;">
+    <h4>إدارة أزرار الكورسات</h4>
+    <div id="buttonsList"></div>
+    <input type="text" id="newButtonName" placeholder="اسم الزر">
+    <button onclick="addButton()">➕ إضافة</button>
+  </div>
+  <div id="questionsTab" class="adminTab" style="display:none;">
+    <h4>إدارة الأسئلة</h4>
+    <div id="questionsList"></div>
+    <input type="text" id="newQuestion" placeholder="السؤال">
+    <button onclick="addQuestion()">➕ إضافة</button>
+  </div>
+  <div id="salesTab" class="adminTab" style="display:none;">
+    <h4>إدارة المبيعات</h4>
+    <div id="salesList"></div>
+  </div>
+</div>
+
+<button id="adminToggleBtn" style="display:none;position:fixed;top:20px;right:20px;z-index:9001;">قائمة المشرفين</button>
+
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyB4_41AcIGnlxFVT7XYGfFFCtGQZmFj0tI",
+  authDomain: "tawiq-f8d65.firebaseapp.com",
+  projectId: "tawiq-f8d65",
+  storageBucket: "tawiq-f8d65.firebasestorage.app",
+  messagingSenderId: "47258312484",
+  appId: "1:47258312484:web:588d01bd2d7fd560e49db1",
+  measurementId: "G-4JXWGDD0HY"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+let isRegister = false;
+document.getElementById('toggleAuth').onclick = () => {
+  isRegister = !isRegister;
+  document.getElementById('authTitle').innerText = isRegister ? 'إنشاء حساب' : 'تسجيل دخول';
+  document.getElementById('authAction').innerText = isRegister ? 'إنشاء حساب' : 'تسجيل دخول';
+  document.getElementById('adminCode').style.display = isRegister ? 'block' : 'none';
+  document.getElementById('toggleAuth').innerText = isRegister ? 'لديك حساب؟ تسجيل دخول' : 'إنشاء حساب جديد';
+};
+
+document.getElementById('authAction').onclick = () => {
+  const email = document.getElementById('email').value;
+  const pass = document.getElementById('password').value;
+  const adminCode = document.getElementById('adminCode').value;
+  if (isRegister) {
+    auth.createUserWithEmailAndPassword(email, pass).then(cred => {
+      db.ref('profiles/' + cred.user.uid).set({email: email});
+      if (adminCode === 'moshrif192837465') {
+        db.ref('admins/' + cred.user.uid).set(true);
+      }
+    }).catch(alert);
+  } else {
+    auth.signInWithEmailAndPassword(email, pass).catch(alert);
+  }
+};
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('authModal').style.display = 'none';
+    db.ref('admins/' + user.uid).once('value').then(snap => {
+      if (snap.val()) {
+        document.getElementById('adminToggleBtn').style.display = 'block';
+      }
+    });
+  } else {
+    document.getElementById('authModal').style.display = 'flex';
+    document.getElementById('adminToggleBtn').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'none';
+  }
+});
+
+document.getElementById('adminToggleBtn').onclick = () => {
+  const panel = document.getElementById('adminPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+};
+</script>
+
+
+<script>
+function openTab(tabId) {
+  document.querySelectorAll('.adminTab').forEach(tab => tab.style.display = 'none');
+  document.getElementById(tabId).style.display = 'block';
+}
+
+// Courses
+function loadCourses() {
+  firebase.database().ref('courses').on('value', snap => {
+    const list = document.getElementById('coursesList');
+    list.innerHTML = '';
+    const data = snap.val() || {};
+    Object.keys(data).forEach(key => {
+      const div = document.createElement('div');
+      div.textContent = data[key].name || 'بدون اسم';
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑️';
+      delBtn.onclick = () => {
+        if (confirm('هل أنت متأكد من حذف هذه الدورة؟')) {
+          firebase.database().ref('courses/' + key).remove();
+        }
+      };
+      div.appendChild(delBtn);
+      list.appendChild(div);
+    });
+  });
+}
+function addCourse() {
+  const name = document.getElementById('newCourseName').value;
+  if (!name) return alert('أدخل اسم الدورة');
+  const key = firebase.database().ref().child('courses').push().key;
+  firebase.database().ref('courses/' + key).set({name});
+  document.getElementById('newCourseName').value = '';
+}
+
+// News
+function loadNews() {
+  firebase.database().ref('newsImages').on('value', snap => {
+    const list = document.getElementById('newsList');
+    list.innerHTML = '';
+    const data = snap.val() || {};
+    Object.keys(data).forEach(key => {
+      const div = document.createElement('div');
+      div.innerHTML = '<img src="'+data[key]+'" style="width:50px;height:50px;">';
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑️';
+      delBtn.onclick = () => {
+        if (confirm('هل أنت متأكد من حذف هذه الصورة؟')) {
+          firebase.database().ref('newsImages/' + key).remove();
+        }
+      };
+      div.appendChild(delBtn);
+      list.appendChild(div);
+    });
+  });
+}
+function addNews() {
+  const url = document.getElementById('newNewsURL').value;
+  if (!url) return alert('أدخل رابط الصورة');
+  const key = firebase.database().ref().child('newsImages').push().key;
+  firebase.database().ref('newsImages/' + key).set(url);
+  document.getElementById('newNewsURL').value = '';
+}
+
+// Buttons
+function loadButtons() {
+  firebase.database().ref('courseButtons').on('value', snap => {
+    const list = document.getElementById('buttonsList');
+    list.innerHTML = '';
+    const data = snap.val() || {};
+    Object.keys(data).forEach(key => {
+      const div = document.createElement('div');
+      div.textContent = data[key];
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑️';
+      delBtn.onclick = () => {
+        if (confirm('هل أنت متأكد من حذف هذا الزر؟')) {
+          firebase.database().ref('courseButtons/' + key).remove();
+        }
+      };
+      div.appendChild(delBtn);
+      list.appendChild(div);
+    });
+  });
+}
+function addButton() {
+  const name = document.getElementById('newButtonName').value;
+  if (!name) return alert('أدخل اسم الزر');
+  const key = firebase.database().ref().child('courseButtons').push().key;
+  firebase.database().ref('courseButtons/' + key).set(name);
+  document.getElementById('newButtonName').value = '';
+}
+
+// Questions
+function loadQuestions() {
+  firebase.database().ref('adminQuestions').on('value', snap => {
+    const list = document.getElementById('questionsList');
+    list.innerHTML = '';
+    const data = snap.val() || {};
+    Object.keys(data).forEach(key => {
+      const div = document.createElement('div');
+      div.textContent = data[key];
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑️';
+      delBtn.onclick = () => {
+        if (confirm('هل أنت متأكد من حذف هذا السؤال؟')) {
+          firebase.database().ref('adminQuestions/' + key).remove();
+        }
+      };
+      div.appendChild(delBtn);
+      list.appendChild(div);
+    });
+  });
+}
+function addQuestion() {
+  const q = document.getElementById('newQuestion').value;
+  if (!q) return alert('أدخل السؤال');
+  const key = firebase.database().ref().child('adminQuestions').push().key;
+  firebase.database().ref('adminQuestions/' + key).set(q);
+  document.getElementById('newQuestion').value = '';
+}
+
+// Sales
+function loadSales() {
+  firebase.database().ref('sales').on('value', snap => {
+    const list = document.getElementById('salesList');
+    list.innerHTML = '';
+    const data = snap.val() || {};
+    Object.keys(data).forEach(key => {
+      const div = document.createElement('div');
+      div.textContent = JSON.stringify(data[key]);
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑️';
+      delBtn.onclick = () => {
+        if (confirm('هل أنت متأكد من حذف هذه العملية؟')) {
+          firebase.database().ref('sales/' + key).remove();
+        }
+      };
+      div.appendChild(delBtn);
+      list.appendChild(div);
+    });
+  });
+}
+
+// Load data when opening tabs
+document.getElementById('adminToggleBtn').addEventListener('click', () => {
+  const panel = document.getElementById('adminPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+});
+
+</script>
+
+</body>
+<footer style="background-color: green;">
+  <footer  class="border-t mt-12">
+<div style="display:flex;align-items:center;justify-content:center;background-color:green;padding:10px;gap:15px;">
+  <img src="https://i.ibb.co/Cyd52rq/Chat-GPT-Image-Aug-11-2025-08-36-12-PM.png" alt="الصورة الأولى" style="height:40px;"> 
+  <span style="max-width:500px;text-align:center;color:white;"> منصة طويق التعليمية هي مساحة تعليمية مصممة خصيصًا لدعم الطلاب في اجتياز اختبار القدرات بسهولة وثقة، وتقدم المنصة مجموعة واسعة من الأدوات والخدمات مثل اختبارات مخصصة وملفات متنوعة للأسئلة وملخصات لتساعدك على تحسين مستواك بسرعة وبطريقة منظمة. مع طويق، ستجد كل ما تحتاجه لتتعلم بكفاءة وتحقق حلمك بإذن الله </span> 
+  <img src="https://i.ibb.co/Cyd52rq/Chat-GPT-Image-Aug-11-2025-08-36-12-PM.png" alt="الصورة الثانية" style="height:40px;">
+</div>
+  </footer>
+</footer>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
